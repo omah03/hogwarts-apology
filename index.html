@@ -153,84 +153,118 @@
             background: linear-gradient(to left top, transparent 50%, #8b4513 50%);
             transform: rotateZ(2deg) translateZ(-1px);
         }
+
+        /* Music control styles */
+        #musicControl {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            cursor: pointer;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 50%;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
     <img src="owl.png" class="owl-delivery" alt="Flying Owl">
 
-    <div class="parchment" onclick="openLetter()">
-        <!-- Closed state seal -->
-        <img src="wax-seal.png" class="closed-seal" alt="Wax Seal">
+    <!-- Music elements -->
+    <audio id="bgMusic" loop>
+        <source src="hogwarts-theme.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <div id="musicControl">🔇</div>
 
-        <!-- Letter content (hidden initially) -->
+    <!-- Parchment letter -->
+    <div class="parchment" onclick="openLetter()">
+        <img src="wax-seal.png" class="closed-seal" alt="Wax Seal">
         <div class="letter-content">
             <img src="hogwarts-logo.png" class="hogwarts-logo" alt="Hogwarts Crest">
-
             <div class="ink-text">
                 <div class="header-info">
                     🏰 Hogwarts School of Witchcraft and Wizardry<br>
                     🏡 Hufflepuff Common Room<br>
                     📅 22.01.2025
                 </div>
-
                 <h2 style="text-align:center;">✨ Magical Apology Scroll ✨</h2>
-                
                 <p>Dearest Merve,</p>
-                
                 <p>I, Omar, solemnly swear:</p>
-                
                 <ul>
                     <li>Always love, listen and appreciate you</li>
                     <li>Shower you with cute gifts & silly snacks</li>
                     <li>Destroy all spiders & dark forces</li>
                 </ul>
-
                 <div style="text-align:center;">
                     <button onclick="acceptApology()">Accept My Eternal Devotion</button>
                 </div>
             </div>
-
-            <img src="wax-seal.png" class="wax-seal" 
-                 onclick="revealSecret()" 
-                 alt="Wax Seal">
+            <img src="wax-seal.png" class="wax-seal" onclick="revealSecret()" alt="Wax Seal">
         </div>
     </div>
 
     <script>
+        // Music control
+        const music = document.getElementById('bgMusic');
+        const control = document.getElementById('musicControl');
+        let isMusicInitialized = false;
+
         function openLetter() {
             const parchment = document.querySelector('.parchment');
             if (!parchment.classList.contains('open')) {
                 parchment.classList.add('open');
             }
+            
+            // Initialize music on first letter opening
+            if(!isMusicInitialized) {
+                music.volume = 0.3;
+                music.play().catch(() => {
+                    control.innerHTML = '🔇 (Click to enable sound)';
+                });
+                control.innerHTML = '🔊';
+                isMusicInitialized = true;
+            }
         }
 
+        // Toggle music
+        control.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if(music.paused) {
+                music.play();
+                control.innerHTML = '🔊';
+            } else {
+                music.pause();
+                control.innerHTML = '🔇';
+            }
+        });
+
         function revealSecret() {
-            const messages = [
-                "Always yours, forever 🖤",
-            ];
+            const messages = ["Always yours, forever 🖤"];
             alert(messages[Math.floor(Math.random() * messages.length)]);
         }
 
         function acceptApology() {
             document.body.style.background = "radial-gradient(circle, #1a0d00, #000)";
-            document.querySelector('button').innerHTML = "💖 Eternally Yours 💖";
-            document.querySelector('button').disabled = true;
+            const button = document.querySelector('button');
+            button.innerHTML = "💖 Eternally Yours 💖";
+            button.disabled = true;
             
             // Add floating hearts
             const heart = document.createElement('div');
-            heart.style = `
+            heart.style.cssText = `
                 position: fixed;
                 font-size: 30px;
                 pointer-events: none;
                 animation: floatHeart 3s linear forwards;
+                left: ${Math.random() * 100}%;
             `;
             heart.innerHTML = '💖';
-            heart.style.left = `${Math.random() * 100}%`;
             document.body.appendChild(heart);
-            
             setTimeout(() => heart.remove(), 3000);
         }
 
+        // Add animation style
         const style = document.createElement('style');
         style.textContent = `
             @keyframes floatHeart {
@@ -241,42 +275,4 @@
         document.head.appendChild(style);
     </script>
 </body>
-<audio id="bgMusic" loop>
-    <source src="hogwarts-theme.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-  
-  <div id="musicControl" style="
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    cursor: pointer;
-    background: rgba(0,0,0,0.7);
-    padding: 10px;
-    border-radius: 50%;
-    z-index: 1000;
-  ">
-    🔇
-  </div>
-  
-  <script>
-  const music = document.getElementById('bgMusic');
-  const control = document.getElementById('musicControl');
-  
-  let isPlaying = false;
-  document.body.addEventListener('click', function initMusic() {
-    if(!isPlaying) {
-      music.play();
-      music.volume = 0.3; // 30% volume
-      control.innerHTML = '🔊';
-      isPlaying = true;
-      document.body.removeEventListener('click', initMusic);
-    }
-  });
-  
-  control.addEventListener('click', () => {
-    music.paused ? music.play() : music.pause();
-    control.innerHTML = music.paused ? '🔇' : '🔊';
-  });
-  </script>
 </html>
