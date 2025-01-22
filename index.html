@@ -206,9 +206,7 @@
 
         function revealSecret() {
             const messages = [
-                "You're my Patronus Charm 💫",
                 "Always yours, forever 🖤",
-                "Our love: Unbreakable Vow 🌟"
             ];
             alert(messages[Math.floor(Math.random() * messages.length)]);
         }
@@ -243,4 +241,42 @@
         document.head.appendChild(style);
     </script>
 </body>
+<audio id="bgMusic" loop>
+    <source src="hogwarts-theme.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  
+  <div id="musicControl" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    background: rgba(0,0,0,0.7);
+    padding: 10px;
+    border-radius: 50%;
+    z-index: 1000;
+  ">
+    🔇
+  </div>
+  
+  <script>
+  const music = document.getElementById('bgMusic');
+  const control = document.getElementById('musicControl');
+  
+  let isPlaying = false;
+  document.body.addEventListener('click', function initMusic() {
+    if(!isPlaying) {
+      music.play();
+      music.volume = 0.3; // 30% volume
+      control.innerHTML = '🔊';
+      isPlaying = true;
+      document.body.removeEventListener('click', initMusic);
+    }
+  });
+  
+  control.addEventListener('click', () => {
+    music.paused ? music.play() : music.pause();
+    control.innerHTML = music.paused ? '🔇' : '🔊';
+  });
+  </script>
 </html>
